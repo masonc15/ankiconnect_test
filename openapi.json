@@ -15,6 +15,7 @@
           "summary": "Perform an Anki action",
           "description": "Executes a specified action in Anki. The 'deckNames' action retrieves a complete list of deck names for the current user. The 'modelNames' action gets the complete list of model names for the current user. The 'addNote' action adds a new note to a specified deck.",
           "operationId": "performAnkiAction",
+          "x-openai-isConsequential": false,
           "requestBody": {
             "description": "Request to perform an action in Anki. Specify the 'action' parameter with the desired action type.",
             "required": true,
