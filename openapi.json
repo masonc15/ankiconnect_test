@@ -1,128 +1,56 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "Anki-Connect API",
-      "version": "1.0"
-    },
-    "servers": [
-      {
-        "url": "https://aee8-108-4-239-156.ngrok.io/"
-      }
-    ],
-    "paths": {
-      "/": {
-        "post": {
-          "summary": "Perform an Anki action",
-          "description": "Executes a specified action in Anki. The 'deckNames' action retrieves a complete list of deck names for the current user. The 'modelNames' action gets the complete list of model names for the current user. The 'addNote' action adds a new note to a specified deck.",
-          "operationId": "performAnkiAction",
-          "x-openai-isConsequential": false,
-          "requestBody": {
-            "description": "Request to perform an action in Anki. Specify the 'action' parameter with the desired action type.",
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "action",
-                    "version"
-                  ],
-                  "properties": {
-                    "action": {
-                      "type": "string",
-                      "enum": [
-                        "deckNames",
-                        "modelNames",
-                        "addNote"
-                      ],
-                      "description": "The action to perform. 'deckNames' returns a list of deck names. 'modelNames' returns a list of model names. 'addNote' adds a new note to the specified deck.",
-                      "example": "deckNames"
-                    },
-                    "version": {
-                      "type": "integer",
-                      "example": 6
-                    },
-                    "params": {
-                      "type": "object",
-                      "additionalProperties": true,
-                      "properties": {
-                        "note": {
-                          "type": "object",
-                          "properties": {
-                            "deckName": {
-                              "type": "string",
-                              "default": "General Trivia",
-                              "enum": ["General Trivia"]
-                            },
-                            "modelName": {
-                              "type": "string",
-                              "example": "Basic"
-                            },
-                            "fields": {
-                              "type": "object",
-                              "properties": {
-                                "Front": {
-                                  "type": "string",
-                                  "example": "front content"
-                                },
-                                "Back": {
-                                  "type": "string",
-                                  "example": "back content"
-                                }
-                              },
-                              "additionalProperties": false
-                            },
-                            "options": {
-                              "type": "object",
-                              "properties": {
-                                "allowDuplicate": {
-                                  "type": "boolean",
-                                  "example": false
-                                },
-                                "duplicateScope": {
-                                  "type": "string",
-                                  "example": "deck"
-                                },
-                                "duplicateScopeOptions": {
-                                  "type": "object",
-                                  "properties": {
-                                    "deckName": {
-                                      "type": "string",
-                                      "example": "General Trivia"
-                                    },
-                                    "checkChildren": {
-                                      "type": "boolean",
-                                      "example": false
-                                    },
-                                    "checkAllModels": {
-                                      "type": "boolean",
-                                      "example": false
-                                    }
-                                  },
-                                  "additionalProperties": false
-                                }
-                              },
-                              "additionalProperties": false
-                            },
-                            "tags": {
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "enum": [
-                                  "api"
-                                ]
-                              },
-                              "maxItems": 1,
-                              "minItems": 1,
-                              "default": [
-                                "api"
-                              ],
-                              "example": [
-                                "api"
-                              ]
-                            }
-                          },
-                          "additionalProperties": false
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Anki-Connect API",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://aee8-108-4-239-156.ngrok.io/"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "summary": "Perform an Anki action",
+        "description": "Executes a specified action in Anki, such as retrieving deck names, model names, adding a single note, or adding multiple notes.",
+        "operationId": "performAnkiAction",
+        "x-openai-isConsequential": false,
+        "requestBody": {
+          "description": "Request to perform an action in Anki. Specify the 'action' parameter with the desired action type.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "action",
+                  "version"
+                ],
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "deckNames",
+                      "modelNames",
+                      "addNote",
+                      "addNotes"
+                    ],
+                    "description": "The action to perform. 'deckNames' returns a list of deck names. 'modelNames' returns a list of model names. 'addNote' adds a new note to the specified deck. 'addNotes' adds multiple notes.",
+                    "example": "addNotes"
+                  },
+                  "version": {
+                    "type": "integer",
+                    "example": 6
+                  },
+                  "params": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "properties": {
+                      "notes": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Note"
                         }
                       }
                     }
@@ -130,23 +58,26 @@
                 }
               }
             }
-          },
-          "responses": {
-            "200": {
-              "description": "The result of the action or an error message",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "result": {
-                        "type": ["integer", "null"],
-                        "example": 1496198395707
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The result of the action or an error message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": ["array", "null"],
+                      "items": {
+                        "type": ["integer", "null"]
                       },
-                      "error": {
-                        "type": ["string", "null"],
-                        "example": null
-                      }
+                      "example": [1496198395707, null]
+                    },
+                    "error": {
+                      "type": ["string", "null"],
+                      "example": null
                     }
                   }
                 }
@@ -156,5 +87,80 @@
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "Note": {
+        "type": "object",
+        "properties": {
+          "deckName": {
+            "type": "string",
+            "default": "General Trivia",
+            "enum": ["General Trivia"]
+          },
+          "modelName": {
+            "type": "string",
+            "example": "Basic"
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "Front": {
+                "type": "string",
+                "example": "front content"
+              },
+              "Back": {
+                "type": "string",
+                "example": "back content"
+              }
+            },
+            "additionalProperties": false
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "allowDuplicate": {
+                "type": "boolean",
+                "example": false
+              },
+              "duplicateScope": {
+                "type": "string",
+                "example": "deck"
+              },
+              "duplicateScopeOptions": {
+                "type": "object",
+                "properties": {
+                  "deckName": {
+                    "type": "string",
+                    "example": "General Trivia"
+                  },
+                  "checkChildren": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "checkAllModels": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["api"]
+            },
+            "maxItems": 1,
+            "minItems": 1,
+            "default": ["api"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
   }
-  
+}
