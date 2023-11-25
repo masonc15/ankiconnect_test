@@ -51,7 +51,8 @@
                           "properties": {
                             "deckName": {
                               "type": "string",
-                              "example": "General Trivia"
+                              "default": "General Trivia",
+                              "enum": ["General Trivia"]
                             },
                             "modelName": {
                               "type": "string",
